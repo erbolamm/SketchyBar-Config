@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1e1e2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Configurador visual para SketchyBar">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon.png">
+  <title>Barra — SketchyBar Config</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="app">
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">⬛</span>
+          <h1>Barra</h1>
+        </div>
+        <span class="badge" id="status-badge">● verificando</span>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-tab="bar">
+          <span class="nav-icon">≡</span>
+          Barra
+        </button>
+        <button class="nav-btn" data-tab="plugins">
+          <span class="nav-icon">⚙</span>
+          Plugins
+        </button>
+        <button class="nav-btn" data-tab="themes">
+          <span class="nav-icon">◧</span>
+          Temas
+        </button>
+        <button class="nav-btn" data-tab="editor">
+          <span class="nav-icon">⎔</span>
+          Editor RAW
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-save" id="btn-save-all" title="Guardar y recargar">
+          💾 Guardar y recargar
+        </button>
+        <span class="version">v1.0</span>
+      </div>
+    </aside>
+
+    <main id="content">
+
+      <!-- TAB: BARRA -->
+      <section id="tab-bar" class="tab-content active">
+        <div class="tab-header">
+          <h2>Apariencia de la Barra</h2>
+          <p class="tab-desc">Personalizá colores, tamaño y posición</p>
+        </div>
+        <div class="card-grid">
+          <div class="card">
+            <label class="card-label">Posición</label>
+            <select id="bar-position" class="input">
+              <option value="top">Arriba (top)</option>
+              <option value="bottom">Abajo (bottom)</option>
+            </select>
+          </div>
+          <div class="card">
+            <label class="card-label">Altura (px)</label>
+            <input type="number" id="bar-height" class="input" min="20" max="100" value="40">
+          </div>
+          <div class="card">
+            <label class="card-label">Desenfoque (blur)</label>
+            <input type="range" id="bar-blur" class="range" min="0" max="80" value="30">
+            <span class="range-value" id="bar-blur-value">30</span>
+          </div>
+          <div class="card">
+            <label class="card-label">Color de fondo</label>
+            <div class="color-picker-row">
+              <input type="color" id="bar-color-picker" class="color-input" value="#000000">
+              <input type="text" id="bar-color" class="input mono" placeholder="0x40000000" value="0x40000000">
+            </div>
+          </div>
+        </div>
+        <div class="preview-section">
+          <h3>Vista previa</h3>
+          <div id="bar-preview" class="bar-preview">
+            <div class="preview-left">1 2 3 4</div>
+            <div class="preview-center"></div>
+            <div class="preview-right">󰕾 75%  󰂄 85%  14:30</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" id="btn-save-bar" style="display:none">Guardar barra</button>
+      </section>
+
+      <!-- TAB: PLUGINS -->
+      <section id="tab-plugins" class="tab-content">
+        <div class="tab-header">
+          <h2>Plugins</h2>
+          <p class="tab-desc">Administrá los scripts de tus plugins</p>
+        </div>
+
+        <div class="plugins-tabs">
+          <button class="plugins-tab-btn active" data-ptab="installed">Instalados</button>
+          <button class="plugins-tab-btn" data-ptab="catalog">Catálogo</button>
+        </div>
+
+        <div id="ptab-installed" class="plugins-tab-content active">
+          <div class="plugins-toolbar">
+            <input type="text" id="plugin-search" class="input" placeholder="🔍 Buscar plugins...">
+            <button class="btn btn-secondary" id="btn-new-plugin">+ Nuevo</button>
+            <button class="btn btn-secondary" id="btn-reset-defaults">↺ Restaurar</button>
+          </div>
+          <div id="plugins-list" class="plugins-list">
+            <div class="loading">Cargando plugins...</div>
+          </div>
+        </div>
+
+        <div id="ptab-catalog" class="plugins-tab-content">
+          <input type="text" id="catalog-search" class="input" placeholder="🔍 Buscar en el catálogo..." style="margin-bottom:12px">
+          <div id="catalog-list" class="plugins-list">
+            <div class="loading">Cargando catálogo...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: TEMAS -->
+      <section id="tab-themes" class="tab-content">
+        <div class="tab-header">
+          <h2>Temas</h2>
+          <p class="tab-desc">Explorá e instalá configuraciones de la comunidad</p>
+        </div>
+
+        <div class="themes-section">
+          <h3>🔥 Temas populares</h3>
+          <input type="text" id="theme-search" class="input" placeholder="🔍 Buscar temas..." style="margin-top:8px;margin-bottom:12px">
+          <div id="themes-list" class="themes-grid">
+            <div class="loading">Cargando temas...</div>
+          </div>
+        </div>
+
+        <div class="themes-section">
+          <h3>📥 Instalar desde URL</h3>
+          <p class="tab-desc">Pegá un link de un repo de GitHub con config de SketchyBar</p>
+          <div class="theme-install-row">
+            <input type="text" id="theme-url" class="input mono" placeholder="https://github.com/usuario/dotfiles">
+            <button class="btn btn-primary" id="btn-install-theme">Instalar tema</button>
+          </div>
+          <div id="theme-install-status" class="theme-status"></div>
+        </div>
+      </section>
+
+      <!-- TAB: EDITOR RAW -->
+      <section id="tab-editor" class="tab-content">
+        <div class="tab-header">
+          <h2>Editor RAW</h2>
+          <p class="tab-desc">Editá el archivo sketchybarrc directamente</p>
+        </div>
+        <div class="editor-container">
+          <div class="editor-toolbar">
+            <span class="editor-path">~/.config/sketchybar/sketchybarrc</span>
+            <span class="editor-line-count" id="line-count">0 líneas</span>
+          </div>
+          <textarea id="raw-editor" class="raw-editor" spellcheck="false"></textarea>
+        </div>
+        <div class="editor-actions">
+          <button class="btn btn-secondary" id="btn-editor-reload">Descartar cambios</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Modal</h3>
+        <button class="modal-close" id="modal-close">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer" id="modal-footer"></div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
