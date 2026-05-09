@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Configurador visual local para editar y recargar SketchyBar en macOS.",
-  "homepage": "https://github.com/erbolamm/SketchyBar-Config#readme",
+  "homepage": "https://erbolamm.github.io/SketchyBar-Config/",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/erbolamm/SketchyBar-Config.git"

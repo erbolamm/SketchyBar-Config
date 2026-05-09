@@ -10,7 +10,9 @@
 **ApliArte SketchyBar** es una app web local para personalizar SketchyBar desde el navegador: ajustar la apariencia, editar plugins, tocar el `sketchybarrc` y aplicar cambios con **Guardar y recargar**.
 
 🔗 Repositorio: <https://github.com/erbolamm/SketchyBar-Config>  
-🌐 Landing incluida: [`landing/index.html`](landing/index.html) o `http://localhost:2999/landing/` con el servidor en marcha.
+🌐 Landing pública: <https://erbolamm.github.io/SketchyBar-Config/>  
+🧪 Landing local: `http://localhost:2999/landing/` con el servidor en marcha.  
+📄 Fuentes de landing: [`docs/index.html`](docs/index.html) para GitHub Pages y [`landing/index.html`](landing/index.html) para la ruta local.
 
 ---
 
@@ -22,6 +24,8 @@
 | Plataforma | macOS |
 | Stack | Node.js + Express + HTML/CSS/JS vanilla + PWA |
 | URL local | `http://localhost:2999` |
+| Landing pública | `https://erbolamm.github.io/SketchyBar-Config/` |
+| Landing local | `http://localhost:2999/landing/` |
 | Config que edita | `~/.config/sketchybar/` |
 
 ---
@@ -97,6 +101,9 @@ Tené en cuenta:
 
 ```text
 SketchyBar-Config/
+├── docs/                 # Landing pública para GitHub Pages
+│   ├── index.html
+│   └── styles.css
 ├── landing/              # Landing estática del proyecto
 │   ├── index.html
 │   └── styles.css
