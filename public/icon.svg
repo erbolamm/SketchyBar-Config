@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#211426" />
+      <stop offset="100%" stop-color="#33253f" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f5bde6" />
+      <stop offset="100%" stop-color="#8bd5ff" />
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="200%" height="200%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+
+  <!-- Inner container (the "bar") -->
+  <rect x="64" y="216" width="384" height="80" rx="40" fill="rgba(255, 255, 255, 0.08)" stroke="rgba(255, 255, 255, 0.15)" stroke-width="4" filter="url(#shadow)" />
+
+  <!-- Bar elements -->
+  <circle cx="120" cy="256" r="16" fill="url(#accent)" />
+  <circle cx="168" cy="256" r="16" fill="rgba(255, 255, 255, 0.3)" />
+  
+  <rect x="216" y="244" width="80" height="24" rx="12" fill="rgba(255, 255, 255, 0.15)" />
+  <rect x="312" y="244" width="120" height="24" rx="12" fill="rgba(255, 255, 255, 0.15)" />
+
+  <!-- ApliArte branding mark -->
+  <path d="M 256 128 L 288 184 L 224 184 Z" fill="url(#accent)" filter="url(#shadow)" />
+  <rect x="232" y="344" width="48" height="16" rx="8" fill="url(#accent)" filter="url(#shadow)" />
+</svg>

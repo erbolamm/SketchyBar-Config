@@ -78,7 +78,7 @@ body {
   background-image:
     linear-gradient(180deg, rgba(22,15,29,.1), rgba(22,15,29,.78)),
     url('/apliarte.png'),
-    url('/icon.png');
+    url('/icon.svg');
   background-size: cover, cover, cover;
   background-position: center;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 16px 36px rgba(0,0,0,.22);

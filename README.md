@@ -46,13 +46,16 @@
 
 - macOS
 - Node.js 18+
-- SketchyBar instalado:
+
+### Pasos
+
+1. **Instalá la barra oficial** con Homebrew:
 
 ```bash
 brew install sketchybar
 ```
 
-### Pasos
+2. **Instalá este configurador**:
 
 ```bash
 git clone https://github.com/erbolamm/SketchyBar-Config.git
