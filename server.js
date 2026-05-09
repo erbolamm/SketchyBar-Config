@@ -11,7 +11,13 @@ const CONFIG_DIR = path.join(os.homedir(), '.config', 'sketchybar');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'sketchybarrc');
 const PLUGINS_DIR = path.join(CONFIG_DIR, 'plugins');
 
+function ensureConfigDirs() {
+  if (!fs.existsSync(CONFIG_DIR)) fs.mkdirSync(CONFIG_DIR, { recursive: true });
+  if (!fs.existsSync(PLUGINS_DIR)) fs.mkdirSync(PLUGINS_DIR, { recursive: true });
+}
+
 app.use(express.json());
+app.use('/landing', express.static(path.join(__dirname, 'landing')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // GET /api/config — leer config completa
@@ -30,18 +36,22 @@ app.post('/api/config', (req, res) => {
   try {
     const { raw } = req.body;
     if (!raw) return res.status(400).json({ error: 'Falta raw content' });
+    ensureConfigDirs();
 
     const tmpFile = CONFIG_FILE + '.tmp';
     fs.writeFileSync(tmpFile, raw, 'utf-8');
-    // validate syntax by sourcing
-    try {
-      execSync(`bash -n "${tmpFile}"`, { timeout: 5000 });
-    } catch (e) {
-      fs.unlinkSync(tmpFile);
-      return res.status(400).json({
-        error: 'Error de sintaxis en bash. Revisá el archivo.',
-        syntaxError: e.stderr ? e.stderr.toString() : e.message,
-      });
+    // validate syntax — detect if Lua or bash
+    const isLua = raw.trimStart().startsWith('#!/usr/bin/env lua') || raw.includes('require(');
+    if (!isLua) {
+      try {
+        execSync(`bash -n "${tmpFile}"`, { timeout: 5000 });
+      } catch (e) {
+        fs.unlinkSync(tmpFile);
+        return res.status(400).json({
+          error: 'Error de sintaxis en bash. Revisá el archivo.',
+          syntaxError: e.stderr ? e.stderr.toString() : e.message,
+        });
+      }
     }
     fs.renameSync(tmpFile, CONFIG_FILE);
     res.json({ success: true });
@@ -76,6 +86,7 @@ app.post('/api/plugins/save', (req, res) => {
     if (!name || content === undefined) {
       return res.status(400).json({ error: 'Falta name o content' });
     }
+    ensureConfigDirs();
     const filePath = path.join(PLUGINS_DIR, name);
     fs.writeFileSync(filePath, content, 'utf-8');
     fs.chmodSync(filePath, 0o755);
@@ -90,6 +101,7 @@ app.post('/api/plugins/create', (req, res) => {
   try {
     const { name } = req.body;
     if (!name) return res.status(400).json({ error: 'Falta name' });
+    ensureConfigDirs();
     const safeName = name.replace(/[^a-zA-Z0-9_-]/g, '_');
     const filePath = path.join(PLUGINS_DIR, safeName + '.sh');
     if (fs.existsSync(filePath)) {
@@ -409,6 +421,25 @@ function githubFetch(urlPath) {
   });
 }
 
+function githubTree(owner, repo, branch) {
+  return new Promise((resolve, reject) => {
+    const treeUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`;
+    https.get(treeUrl, { headers: { 'User-Agent': 'Barra-Studio' } }, (resp) => {
+      let data = '';
+      resp.on('data', chunk => data += chunk);
+      resp.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (resp.statusCode >= 400) return reject(new Error(parsed.message || `HTTP ${resp.statusCode}`));
+          resolve(parsed.tree || []);
+        } catch {
+          reject(new Error('Respuesta inválida de GitHub'));
+        }
+      });
+    }).on('error', reject);
+  });
+}
+
 // POST /api/themes/install — instalar tema desde URL de GitHub
 app.post('/api/themes/install', async (req, res) => {
   try {
@@ -424,38 +455,44 @@ app.post('/api/themes/install', async (req, res) => {
     const branchMatch = url.match(/tree\/([^/]+)/);
     if (branchMatch) branch = branchMatch[1];
 
+    let repoTree = [];
+    try {
+      repoTree = await githubTree(owner, repo, branch);
+    } catch (e) {
+      if (branch === 'main') {
+        branch = 'master';
+        repoTree = await githubTree(owner, repo, branch);
+      } else {
+        throw e;
+      }
+    }
+
     // Backup current config
     const backupPath = CONFIG_FILE + '.backup.' + Date.now();
     if (fs.existsSync(CONFIG_FILE)) {
       fs.copyFileSync(CONFIG_FILE, backupPath);
     }
 
-    // Try to fetch sketchybarrc from common locations
-    const possiblePaths = [
-      `/${owner}/${repo}/${branch}/.config/sketchybar/sketchybarrc`,
-      `/${owner}/${repo}/${branch}/sketchybarrc`,
-      `/${owner}/${repo}/${branch}/sketchybar/sketchybarrc`,
-      `/${owner}/${repo}/master/.config/sketchybar/sketchybarrc`,
-      `/${owner}/${repo}/master/sketchybarrc`,
-    ];
+    const configCandidates = repoTree
+      .filter(f => f.type === 'blob' && path.basename(f.path) === 'sketchybarrc')
+      .sort((a, b) => {
+        const score = p => (p.includes('.config/sketchybar') ? 0 : p.includes('sketchybar') ? 1 : 2);
+        return score(a.path) - score(b.path) || a.path.length - b.path.length;
+      });
 
+    const foundConfig = configCandidates[0];
     let configContent = null;
     let foundPath = null;
 
-    for (const p of possiblePaths) {
-      try {
-        configContent = await githubFetch(p);
-        foundPath = p;
-        break;
-      } catch (e) {
-        // try next path
-      }
+    if (foundConfig) {
+      foundPath = foundConfig.path;
+      configContent = await githubFetch(`/${owner}/${repo}/${branch}/${foundPath}`);
     }
 
     if (!configContent) {
       return res.status(404).json({
         error: 'No se encontró sketchybarrc en ese repo. Probá con otro link.',
-        tried: possiblePaths,
+        tried: ['**/sketchybarrc'],
       });
     }
 
@@ -466,51 +503,24 @@ app.post('/api/themes/install', async (req, res) => {
     const pluginsDir = path.join(CONFIG_DIR, 'plugins');
     if (!fs.existsSync(pluginsDir)) fs.mkdirSync(pluginsDir, { recursive: true });
 
-    // Try to fetch plugins from common plugin paths
-    const pluginPaths = [
-      `/${owner}/${repo}/${branch}/.config/sketchybar/plugins/`,
-      `/${owner}/${repo}/${branch}/sketchybar/plugins/`,
-      `/${owner}/${repo}/${branch}/plugins/`,
-    ];
-
     let pluginsInstalled = 0;
-    for (const pp of pluginPaths) {
+    const configDir = path.dirname(foundPath);
+    const plugins = repoTree.filter(f =>
+      f.type === 'blob' &&
+      f.path.endsWith('.sh') &&
+      (f.path.startsWith(`${configDir}/plugins/`) || f.path.includes('/sketchybar/plugins/'))
+    );
+
+    for (const plugin of plugins) {
+      const pluginName = path.basename(plugin.path);
+      const rawPath = `/${owner}/${repo}/${branch}/${plugin.path}`;
       try {
-        const treeUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`;
-        const treeData = await new Promise((resolve, reject) => {
-          https.get(treeUrl, (resp) => {
-            let data = '';
-            resp.on('data', chunk => data += chunk);
-            resp.on('end', () => {
-              try { resolve(JSON.parse(data)); }
-              catch { reject(new Error('Invalid JSON')); }
-            });
-          }).on('error', reject);
-        });
-
-        if (treeData.tree) {
-          const pluginPrefix = pp.replace(`https://api.github.com/repos/${owner}/${repo}/git/trees/${branch}`, '').replace('/git/trees/', '/');
-          const plugins = treeData.tree.filter(f =>
-            f.path.endsWith('.sh') &&
-            (f.path.includes('sketchybar/plugins') || f.path.endsWith('/plugins/'))
-          );
-
-          for (const plugin of plugins) {
-            const pluginName = path.basename(plugin.path);
-            const rawPath = `/${owner}/${repo}/${branch}/${plugin.path}`;
-            try {
-              const pluginContent = await githubFetch(rawPath);
-              fs.writeFileSync(path.join(pluginsDir, pluginName), pluginContent, 'utf-8');
-              fs.chmodSync(path.join(pluginsDir, pluginName), 0o755);
-              pluginsInstalled++;
-            } catch (e) {
-              // skip plugin if can't fetch
-            }
-          }
-        }
-        if (pluginsInstalled > 0) break;
+        const pluginContent = await githubFetch(rawPath);
+        fs.writeFileSync(path.join(pluginsDir, pluginName), pluginContent, 'utf-8');
+        fs.chmodSync(path.join(pluginsDir, pluginName), 0o755);
+        pluginsInstalled++;
       } catch (e) {
-        // try next plugin path
+        // skip plugin if can't fetch
       }
     }
 
@@ -528,7 +538,7 @@ app.post('/api/themes/install', async (req, res) => {
 
 // POST /api/start — iniciar sketchybar
 app.post('/api/start', (req, res) => {
-  exec('brew services start sketchybar 2>/dev/null || sketchybar', (err, stdout, stderr) => {
+  exec('brew services start sketchybar 2>/dev/null || (sketchybar >/tmp/sketchybar.log 2>&1 &)', (err, stdout, stderr) => {
     if (err) {
       return res.status(500).json({
         error: 'No se pudo iniciar SketchyBar',
@@ -569,12 +579,34 @@ app.post('/api/bar', (req, res) => {
   try {
     const { position, height, blurRadius, color } = req.body;
     const raw = fs.readFileSync(CONFIG_FILE, 'utf-8');
-    let updated = raw;
 
-    if (position) updated = updated.replace(/position=\S+/g, `position=${position}`);
-    if (height) updated = updated.replace(/height=\d+/g, `height=${height}`);
-    if (blurRadius !== undefined) updated = updated.replace(/blur_radius=\d+/g, `blur_radius=${blurRadius}`);
-    if (color) updated = updated.replace(/color=0x[0-9a-fA-F]+/g, `color=${color}`);
+    const setBarProp = (line, key, value) => {
+      if (value === undefined || value === null || value === '') return line;
+      const prop = `${key}=${value}`;
+      const propRegex = new RegExp(`(^|\\s)${key}=\\S+`);
+      return propRegex.test(line)
+        ? line.replace(propRegex, (match, prefix) => `${prefix}${prop}`)
+        : `${line} ${prop}`;
+    };
+
+    const lines = raw.split('\n');
+    let foundBarLine = false;
+    const updatedLines = lines.map(line => {
+      if (!/^\s*sketchybar\s+--bar\b/.test(line)) return line;
+      foundBarLine = true;
+      let updatedLine = line;
+      updatedLine = setBarProp(updatedLine, 'position', position);
+      updatedLine = setBarProp(updatedLine, 'height', height);
+      updatedLine = setBarProp(updatedLine, 'blur_radius', blurRadius);
+      updatedLine = setBarProp(updatedLine, 'color', color);
+      return updatedLine;
+    });
+
+    if (!foundBarLine) {
+      updatedLines.unshift(`sketchybar --bar position=${position || 'top'} height=${height || 40} blur_radius=${blurRadius ?? 30} color=${color || '0x40000000'}`);
+    }
+
+    const updated = updatedLines.join('\n');
 
     fs.writeFileSync(CONFIG_FILE, updated, 'utf-8');
     res.json({ success: true });

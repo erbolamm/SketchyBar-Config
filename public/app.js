@@ -43,18 +43,12 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 async function checkStatus() {
   const s = await API.getStatus();
   const badge = document.getElementById('status-badge');
-  const startBtn = document.getElementById('btn-start');
-  const reloadBtn = document.getElementById('btn-reload');
   if (s.running) {
     badge.textContent = '● activo';
     badge.className = 'badge running';
-    startBtn.classList.add('hidden');
-    reloadBtn.classList.remove('hidden');
   } else {
     badge.textContent = '● detenido';
     badge.className = 'badge stopped';
-    startBtn.classList.remove('hidden');
-    reloadBtn.classList.add('hidden');
   }
 }
 checkStatus();
@@ -447,27 +441,17 @@ document.getElementById('btn-save-all').addEventListener('click', async () => {
     saved = true;
   }
 
-  // Reload
-  const r = await API.reload();
+  // Reload if SketchyBar is running; start it otherwise.
+  const status = await API.getStatus();
+  const r = status.running ? await API.reload() : await API.start();
   if (r.success) {
-    toast(saved ? '✅ Guardado y recargado' : '↻ Recargado');
+    toast(saved ? '✅ Guardado y aplicado' : `↻ ${r.message}`);
     await checkStatus();
     await loadBarConfig();
     await loadPlugins();
     await loadCatalog();
   } else {
     toast(r.error || 'Error al recargar', 'error');
-  }
-});
-
-document.getElementById('btn-start').addEventListener('click', async () => {
-  const r = await API.start();
-  if (r.success) {
-    toast(r.message);
-    await checkStatus();
-    await loadBarConfig();
-  } else {
-    toast(r.error || 'Error', 'error');
   }
 });
 

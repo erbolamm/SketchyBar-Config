@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ApliArte SketchyBar: configurador visual local para personalizar SketchyBar en macOS.">
+  <meta name="theme-color" content="#241329">
+  <title>ApliArte SketchyBar — configurador visual para SketchyBar</title>
+  <link rel="icon" href="../public/icon.png" type="image/png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="topbar" aria-label="Navegación principal">
+      <a class="brand" href="#top" aria-label="ApliArte SketchyBar">
+        <span class="brand-mark" aria-hidden="true">▰</span>
+        <span>ApliArte SketchyBar</span>
+      </a>
+      <div class="topbar-links">
+        <a href="#instalar">Instalar</a>
+        <a href="#privacidad">Privacidad</a>
+        <a href="https://github.com/erbolamm/SketchyBar-Config">GitHub</a>
+      </div>
+    </nav>
+
+    <section id="top" class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">Herramienta local para macOS</p>
+        <h1>Configurá SketchyBar sin pelearte con archivos a mano.</h1>
+        <p class="lead">
+          ApliArte SketchyBar es una app web local para personalizar tu barra de macOS,
+          instalar plugins y guardar cambios con una experiencia visual clara.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#instalar">Empezar en 3 pasos</a>
+          <a class="button secondary" href="https://github.com/erbolamm/SketchyBar-Config">Ver en GitHub</a>
+        </div>
+        <p class="run-note">Después de ejecutarla: <code>http://localhost:2999</code></p>
+      </div>
+
+      <div class="product-card" aria-label="Vista previa de ApliArte SketchyBar">
+        <div class="window-controls" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="mock-sidebar">
+          <strong>ApliArte</strong>
+          <span class="pill active">Barra</span>
+          <span class="pill">Plugins</span>
+          <span class="pill">Temas</span>
+          <span class="pill">Editor RAW</span>
+        </div>
+        <div class="mock-content">
+          <div class="mock-bar"><span>1 2 3 4</span><span>󰕾 75% · 14:30</span></div>
+          <div class="mock-grid">
+            <span>Posición</span><span>Altura</span><span>Desenfoque</span><span>Color</span>
+          </div>
+          <div class="save-strip">💾 Guardar y recargar</div>
+        </div>
+      </div>
+    </section>
+  </header>
+
+  <main>
+    <section class="section answer">
+      <p class="section-kicker">Qué es</p>
+      <h2>Un panel visual para editar tu configuración real de SketchyBar.</h2>
+      <p>
+        La app corre en tu Mac con Node.js + Express y trabaja sobre
+        <code>~/.config/sketchybar/</code>. No intenta reemplazar SketchyBar:
+        lo hace más cómodo de configurar, probar y recargar.
+      </p>
+    </section>
+
+    <section class="section cards" aria-labelledby="features-title">
+      <div class="section-heading">
+        <p class="section-kicker">Características</p>
+        <h2 id="features-title">Lo esencial para ajustar la barra rápido</h2>
+      </div>
+      <div class="card-grid">
+        <article class="card"><span>🎨</span><h3>Apariencia visual</h3><p>Cambiá posición, altura, blur y color con vista previa.</p></article>
+        <article class="card"><span>🧩</span><h3>Plugins</h3><p>Instalá, editá y guardá scripts para ampliar tu barra.</p></article>
+        <article class="card"><span>📝</span><h3>Editor RAW</h3><p>Modificá <code>sketchybarrc</code> directamente cuando necesites control fino.</p></article>
+        <article class="card"><span>⚡</span><h3>Guardar y recargar</h3><p>Aplicá cambios desde un único flujo: guardar, recargar o iniciar si hace falta.</p></article>
+      </div>
+    </section>
+
+    <section id="instalar" class="section install">
+      <div>
+        <p class="section-kicker">Instalación</p>
+        <h2>Arrancá localmente</h2>
+        <p>Necesitás macOS, Node.js y SketchyBar instalado con Homebrew.</p>
+      </div>
+      <pre><code>git clone https://github.com/erbolamm/SketchyBar-Config.git
+cd SketchyBar-Config
+npm install
+npm start</code></pre>
+      <p class="callout">Abrí <strong>http://localhost:2999</strong> para usar la app.</p>
+    </section>
+
+    <section id="privacidad" class="section privacy">
+      <p class="section-kicker">Privacidad</p>
+      <h2>Local-first por diseño.</h2>
+      <p>
+        ApliArte SketchyBar se ejecuta en tu equipo y edita archivos locales de SketchyBar.
+        Los cambios afectan a tu configuración de macOS, así que revisá antes de guardar si
+        tenés una configuración muy personalizada.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>ApliArte SketchyBar · hecho para personalizar macOS con más calma.</span>
+    <a href="https://github.com/erbolamm/SketchyBar-Config">github.com/erbolamm/SketchyBar-Config</a>
+  </footer>
+</body>
+</html>

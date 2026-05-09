@@ -1,8 +1,24 @@
 {
-  "name": "barra",
+  "name": "apliarte-sketchybar",
   "version": "1.0.0",
   "private": true,
-  "description": "Configurador visual para SketchyBar",
+  "description": "Configurador visual local para editar y recargar SketchyBar en macOS.",
+  "homepage": "https://github.com/erbolamm/SketchyBar-Config#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erbolamm/SketchyBar-Config.git"
+  },
+  "bugs": {
+    "url": "https://github.com/erbolamm/SketchyBar-Config/issues"
+  },
+  "keywords": [
+    "sketchybar",
+    "macos",
+    "apliarte",
+    "local-first",
+    "pwa"
+  ],
+  "license": "MIT",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
