@@ -55,13 +55,15 @@
 brew install sketchybar
 ```
 
-2. **Instalá este configurador**:
+2. **Descargá la App:**
+   - Podés bajar el archivo `.dmg` listo para usar desde la sección de **Releases** en GitHub.
+   - O podés clonar y compilarla vos mismo:
 
 ```bash
 git clone https://github.com/erbolamm/SketchyBar-Config.git
 cd SketchyBar-Config
 npm install
-npm start
+npm run dist
 ```
 
 Después abrí:

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Configurador visual local para editar y recargar SketchyBar en macOS.",
+  "main": "main.js",
   "homepage": "https://erbolamm.github.io/SketchyBar-Config/",
   "repository": {
     "type": "git",
@@ -16,14 +17,33 @@
     "macos",
     "apliarte",
     "local-first",
-    "pwa"
+    "pwa",
+    "electron"
   ],
   "license": "MIT",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "electron .",
+    "dev": "node server.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder --mac"
+  },
+  "build": {
+    "appId": "com.apliarte.sketchybar",
+    "productName": "ApliArte SketchyBar",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "icon": "public/icon.png",
+      "target": ["dmg", "zip"]
+    },
+    "directories": {
+      "buildResources": "public"
+    }
   },
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
   }
 }

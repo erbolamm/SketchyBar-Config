@@ -640,8 +640,16 @@ function parseConfig(raw) {
   return { sections, totalLines: lines.length };
 }
 
-app.listen(PORT, () => {
-  console.log(`\n  🟦 Barra v1.0 — Configurador SketchyBar`);
-  console.log(`  ─────────────────────────────────────`);
-  console.log(`  Abrí en tu navegador: http://localhost:${PORT}\n`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`\n  🟦 Barra v1.0 — Configurador SketchyBar`);
+    console.log(`  ─────────────────────────────────────`);
+    console.log(`  Abrí en tu navegador: http://localhost:${PORT}\n`);
+  });
+} else {
+  // Cuando se importa desde Electron, iniciamos acá también
+  app.listen(PORT, () => {
+    console.log(`Express corriendo en el puerto ${PORT} para Electron`);
+  });
+  module.exports = app;
+}
