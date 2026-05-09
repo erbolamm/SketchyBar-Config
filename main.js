@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-const server = require('./server.js'); // Assuming we'll modify server.js to export the express app
+require('./server.js');
 
 let mainWindow;
 
@@ -17,7 +17,6 @@ function createWindow() {
     }
   });
 
-  // Load the local Express server
   mainWindow.loadURL(`http://localhost:${process.env.PORT || 2999}`);
 
   mainWindow.on('closed', () => {

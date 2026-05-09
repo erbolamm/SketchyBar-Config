@@ -24,17 +24,17 @@
 
     <section id="top" class="hero-grid">
       <div class="hero-copy">
-        <p class="eyebrow">Herramienta local para macOS</p>
+        <p class="eyebrow">App de escritorio para macOS</p>
         <h1>Configurá SketchyBar sin romperte la cabeza.</h1>
         <p class="lead">
-          ApliArte SketchyBar es una app web local para tocar tu barra de macOS,
-          instalar plugins y guardar cambios sin vivir peleándote con la terminal.
+          ApliArte SketchyBar es una app de escritorio para tocar tu barra de macOS,
+          instalar plugins y guardar cambios desde una ventana propia.
         </p>
         <div class="hero-actions">
-          <a class="button primary" href="#instalar">Arrancar en 3 pasos</a>
+          <a class="button primary" href="#instalar">Instalar la app</a>
           <a class="button secondary" href="https://github.com/erbolamm/SketchyBar-Config">Ver en GitHub</a>
         </div>
-        <p class="run-note">Después de ejecutarla: <code>http://localhost:2999</code></p>
+        <p class="run-note">Primero instalás SketchyBar; después abrís ApliArte SketchyBar.app.</p>
       </div>
 
       <div class="product-card" aria-label="Vista previa de ApliArte SketchyBar">
@@ -62,7 +62,7 @@
       <p class="section-kicker">Qué es</p>
       <h2>Un panel visual para editar tu configuración real de SketchyBar.</h2>
       <p>
-        La app corre en tu Mac con Node.js + Express y trabaja sobre
+        La app corre en tu Mac como aplicación de escritorio y trabaja sobre
         <code>~/.config/sketchybar/</code>. No intenta reemplazar SketchyBar:
         lo hace más cómodo de configurar, probar y recargar.
       </p>
@@ -84,20 +84,21 @@
     <section id="instalar" class="section install">
       <div>
         <p class="section-kicker">Instalación</p>
-        <h2>Arrancá localmente</h2>
+        <h2>Instalá SketchyBar y después la app</h2>
         <p>
           Primero instalá la barra oficial desde
           <a href="https://github.com/FelixKratz/SketchyBar">github.com/FelixKratz/SketchyBar</a>.
-          Después usá esta app para configurarla visualmente.
+          Después descargá ApliArte SketchyBar desde Releases o compilala desde el repo.
         </p>
       </div>
       <pre><code>brew install sketchybar
 
+# Opción dev: compilar la app
 git clone https://github.com/erbolamm/SketchyBar-Config.git
 cd SketchyBar-Config
 npm install
-npm start</code></pre>
-      <p class="callout">Abrí <strong>http://localhost:2999</strong> para usar la app.</p>
+npm run dist</code></pre>
+      <p class="callout">El usuario final debería descargar el <strong>.dmg</strong> desde Releases y abrir <strong>ApliArte SketchyBar.app</strong>.</p>
     </section>
 
     <section id="privacidad" class="section privacy">

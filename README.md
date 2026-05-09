@@ -1,17 +1,17 @@
 # ApliArte SketchyBar
 
-> Configurador visual local para [SketchyBar](https://github.com/FelixKratz/SketchyBar) en macOS.
+> App de escritorio para configurar [SketchyBar](https://github.com/FelixKratz/SketchyBar) en macOS.
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![SketchyBar](https://img.shields.io/badge/SketchyBar-compatible-ff8f00?logo=apple&logoColor=white)](https://github.com/FelixKratz/SketchyBar)
 [![macOS](https://img.shields.io/badge/macOS-local--first-000000?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**ApliArte SketchyBar** es una app web local para personalizar SketchyBar desde el navegador: ajustar la apariencia, editar plugins, tocar el `sketchybarrc` y aplicar cambios con **Guardar y recargar**.
+**ApliArte SketchyBar** es una app de escritorio para personalizar SketchyBar: ajustar la apariencia, editar plugins, tocar el `sketchybarrc` y aplicar cambios con **Guardar y recargar**.
 
 🔗 Repositorio: <https://github.com/erbolamm/SketchyBar-Config>  
 🌐 Landing pública: <https://erbolamm.github.io/SketchyBar-Config/>  
-🧪 Landing local: `http://localhost:2999/landing/` con el servidor en marcha.  
+🧪 Landing local: incluida para desarrollo del proyecto.  
 📄 Fuentes de landing: [`docs/index.html`](docs/index.html) para GitHub Pages y [`landing/index.html`](landing/index.html) para la ruta local.
 
 ---
@@ -20,12 +20,12 @@
 
 | Dato | Valor |
 |------|-------|
-| Tipo | Herramienta developer / app web local |
+| Tipo | App de escritorio para macOS |
 | Plataforma | macOS |
-| Stack | Node.js + Express + HTML/CSS/JS vanilla + PWA |
-| URL local | `http://localhost:2999` |
+| Stack | Electron + Node.js + Express + HTML/CSS/JS vanilla |
+| App | `ApliArte SketchyBar.app` |
 | Landing pública | `https://erbolamm.github.io/SketchyBar-Config/` |
-| Landing local | `http://localhost:2999/landing/` |
+| Landing local | Disponible en modo desarrollo |
 | Config que edita | `~/.config/sketchybar/` |
 
 ---
@@ -36,7 +36,7 @@
 - 🧩 **Gestionar plugins**: instalar desde catálogo, crear plugins y editar scripts.
 - 📝 **Editar RAW**: modificar el archivo `sketchybarrc` directamente.
 - 💾 **Guardar y recargar**: aplicar cambios desde un único botón.
-- 📱 **Instalar como PWA**: usarla como app standalone en macOS.
+- 📱 **Usarla como app de escritorio**: empaquetada en `.dmg` / `.app`.
 
 ---
 
@@ -66,23 +66,19 @@ npm install
 npm run dist
 ```
 
-Después abrí:
+Después abrí la app generada desde `dist/`.
+
+Para desarrollo web local:
 
 ```text
-http://localhost:2999
-```
-
-Para ver la landing local:
-
-```text
-http://localhost:2999/landing/
+npm run dev
 ```
 
 ---
 
 ## Uso básico
 
-1. Abrí la app local.
+1. Abrí `ApliArte SketchyBar.app`.
 2. Entrá en **Barra** para ajustar apariencia.
 3. Usá **Plugins** para instalar o editar scripts.
 4. Si necesitás control fino, entrá en **Editor RAW**.
@@ -112,12 +108,13 @@ SketchyBar-Config/
 ├── landing/              # Landing estática del proyecto
 │   ├── index.html
 │   └── styles.css
-├── public/               # App web local / PWA
+├── public/               # Interfaz de la app
 │   ├── index.html
 │   ├── styles.css
 │   ├── app.js
 │   ├── manifest.json
 │   ├── sw.js
+│   ├── icon.svg
 │   └── icon.png
 ├── server.js             # Servidor Express + APIs locales
 ├── package.json
@@ -222,4 +219,4 @@ MIT — © 2026 ApliArte
 
 ## About
 
-ApliArte SketchyBar is a local-first macOS developer tool for configuring SketchyBar from a browser. It provides a visual bar editor, plugin management, raw configuration editing, a PWA interface, and a static landing page for publishing the project on GitHub.
+ApliArte SketchyBar is a desktop macOS app for configuring SketchyBar. It provides a visual bar editor, plugin management, raw configuration editing, and a static landing page for publishing the project on GitHub.
