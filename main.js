@@ -1,10 +1,12 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
-require('./server.js');
+const serverReady = require('./server.js');
 
 let mainWindow;
 
-function createWindow() {
+async function createWindow() {
+  await serverReady;
+
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
@@ -17,7 +19,7 @@ function createWindow() {
     }
   });
 
-  mainWindow.loadURL(`http://localhost:${process.env.PORT || 2999}`);
+  mainWindow.loadURL('http://localhost:2999');
 
   mainWindow.on('closed', () => {
     mainWindow = null;
